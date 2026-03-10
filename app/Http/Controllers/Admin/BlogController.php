@@ -42,4 +42,60 @@ class BlogController extends Controller
        toastr()->success('Blog created successfully');
        return redirect()->back();
     }
+
+    public function listBlog ()
+    {
+        $blogs = Blog::orderBy('id', 'desc')->paginate(20);
+        return view('admin.blog.list', compact('blogs'));
+    }
+
+    public function deleteBlog ($id)
+    {
+        $blog = Blog::find($id);
+
+        if($blog->image && file_exists('blogs/'.basename($blog->image))){
+            unlink('blogs/'.basename($blog->image));
+        }
+
+        $blog->delete();
+
+        toastr()->success('Blog deleted successfully');
+        return redirect()->back();
+    }
+
+    public function editBlog ($id)
+    {
+        $blog = Blog::find($id);
+        return view('admin.blog.edit', compact('blog'));
+    }
+
+    public function upadteBlog (Request $request, $id)
+    {
+        $blog = Blog::find($id);
+
+        $blog->title = $request->title;
+        $blog->subtitle = $request->subtitle;
+        $blog->author_name = $request->author_name;
+        $blog->blog_details = $request->blog_details;
+
+        if(isset($request->image)){
+
+            if($blog->image && file_exists('blogs/'.basename($blog->image))){
+                unlink('blogs/'.basename($blog->image));
+            }
+
+            $image = $request->file('image');
+            $imageName = rand().'.'.$image->getClientOriginalExtension();
+            $image->move('blogs', $imageName);
+
+            $blog->image = url('blogs/'.$imageName);
+
+       }
+
+       $blog->save();
+
+       toastr()->success('Blog updated successfully');
+       return redirect('admin/list-blog');
+
+    }
 }

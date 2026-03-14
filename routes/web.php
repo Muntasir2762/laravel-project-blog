@@ -10,7 +10,7 @@ Route::get('/', [HomePageController::class, 'index']);
 Route::get('/about-me', [HomePageController::class, 'aboutMe']);
 Route::get('/contact-me', [HomePageController::class, 'contactMe']);
 Route::post('/store-contact-message', [HomePageController::class, 'storeContactMessage']);
-Route::get('/blog-details', [HomePageController::class, 'blogDetails']);
+Route::get('/blog-details/{id}', [HomePageController::class, 'blogDetails']);
 
 Auth::routes([
     'register' => false,
